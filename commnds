@@ -1,0 +1,5 @@
+pip3 install customtkinter
+
+pip3 install pillow
+
+sqlite3 databasename
