@@ -36,7 +36,7 @@ def create_sidebar(master, switch_view):
         ("Tutions", "./images/button-icons/teacher_copy.png", lambda: switch_view("tutions")),
         ("Fees", "./images/button-icons/bank.png", lambda: switch_view("fees")),
         ("Settings and profile", "./images/button-icons/setting-2.png", lambda: switch_view("settings")),
-        ("Results", "./images/button-icons/chart-square.png", lambda: switch_view("results"))
+        ("Dashboard", "./images/button-icons/chart-square.png", lambda: switch_view("dashboard"))
     ]
 
     # Create the sidebar frame

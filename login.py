@@ -3,7 +3,6 @@ import os
 from datetime import datetime
 from database.handler import read_records, create_record, update_record
 
-
 def show_login(conn):
     # Initialize the CustomTkinter application
     app = ctk.CTk()
@@ -25,24 +24,24 @@ def show_login(conn):
         users = read_records(conn, 'students', where_clause=f"name = '{username}' AND password = '{password}'")
 
         if users:
-            user = users[0]  # Get the first (and should be only) user
-            user_type = user[4]  # Assuming 'type' is the 5th column (index 4)
+            user = users[0]
+            user_id = user[0]  # Assume user ID is the first column
+            user_type = user[4]  # Assume user type is the fifth column
             print(f"Login successful for user: {username}")
 
             # Update attendance only if user is a student
             if user_type == 'Student':
-                current_date = datetime.now().strftime("%Y-%m-%d")  # e.g., "2024-08-17"
+                current_date = datetime.now().strftime("%Y-%m-%d")
 
                 # Check if attendance record exists for the current date
                 existing_attendance = read_records(conn, 'attendance',
                                                    columns=['*'],
                                                    where_clause=f"username = '{username}' AND date = '{current_date}'")
 
-                print(existing_attendance)
-                total_days = 1  # Only one day of attendance per login
-                present_days = 1  # Increment present days by 1
+                total_days = 1
+                present_days = 1
                 percentage = f"{(present_days / total_days) * 100:.2f}%"
-                color = "#ff0000"  # Example color
+                color = "#ff0000"
 
                 if not existing_attendance:
                     # Create new attendance record
@@ -64,9 +63,9 @@ def show_login(conn):
             app.destroy()  # Close the login window
 
             if user_type == 'Student':
-                os.system('python ./student/main.py')  # Redirect to student/main.py
+                os.system(f'python ./student/main.py {user_id}')  # Pass the user ID to the student script
             elif user_type == 'Teacher':
-                os.system('python ./teacher/main.py')  # Redirect to teacher/main.py
+                os.system(f'python ./teacher/main.py {user_id}')  # Pass the user ID to the teacher script
             else:
                 print(f"Unknown user type: {user_type}")
         else:

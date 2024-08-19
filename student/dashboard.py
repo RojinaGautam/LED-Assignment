@@ -70,3 +70,5 @@ def view_assignments(module_id):
 
         due_date_label = ctk.CTkLabel(assignments_frame, text=f"Due Date: {assignment[1]}", font=("Arial", 12))
         due_date_label.grid(row=i, column=1, sticky="w", pady=5)
+
+        

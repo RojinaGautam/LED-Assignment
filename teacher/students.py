@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from PIL import Image, ImageTk
 
 def create_students_content(master):
     global content_frame
@@ -21,88 +22,86 @@ def create_students_content(master):
     welcome_label = ctk.CTkLabel(top_frame, text="Welcome,", font=("Arial", 24, "bold"))
     welcome_label.grid(row=0, column=0, sticky="w", padx=10)
 
-    # Add the illustration placeholder on the right
-    illustration_placeholder = ctk.CTkLabel(top_frame, text="", font=("Arial", 16), width=200, height=150, corner_radius=10, fg_color="#e9ecef")
-    illustration_placeholder.grid(row=0, column=1, rowspan=2, sticky="e", padx=20)
+    # Illustration on the right
+    illustration_image = Image.open("./images/students.png")
+    illustration_image = illustration_image.resize((200, 150))
+    illustration_photo = ImageTk.PhotoImage(illustration_image)
+    illustration_label = ctk.CTkLabel(top_frame, image=illustration_photo, text="")
+    illustration_label.image = illustration_photo  # Keep a reference to avoid garbage collection
+    illustration_label.grid(row=0, column=1, rowspan=2, sticky="e", padx=20)
 
-    # Bottom left section with Classes and Students
-    bottom_left_frame = ctk.CTkFrame(content_frame, fg_color="#f8f9fa", corner_radius=10)
-    bottom_left_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
+    # Bottom section with two rows and two columns
+    bottom_frame = ctk.CTkFrame(content_frame, fg_color="#f8f9fa", corner_radius=10)
+    bottom_frame.grid(row=1, column=0, columnspan=2, sticky="nsew", padx=10, pady=10)
+    bottom_frame.grid_columnconfigure(0, weight=1)
+    bottom_frame.grid_columnconfigure(1, weight=1)
+    bottom_frame.grid_rowconfigure(0, weight=1)
+    bottom_frame.grid_rowconfigure(1, weight=1)
 
-    classes_label = ctk.CTkLabel(bottom_left_frame, text="Classes", font=("Arial", 18, "bold"))
+    # Classes section
+    classes_frame = ctk.CTkFrame(bottom_frame, fg_color="#fff", corner_radius=10)
+    classes_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+
+    classes_label = ctk.CTkLabel(classes_frame, text="Classes", font=("Arial", 18, "bold"))
     classes_label.grid(row=0, column=0, sticky="w", padx=10, pady=10)
 
     class_buttons = [
-        ("All Classes", "Add"),
-        ("Mathematics", "Add"),
-        ("Science", "Add"),
-        ("English", "Add"),
+        ("All Classes", "+"),
+        ("Mathematics", "+"),
+        ("Science", "+"),
+        ("English", "+"),
     ]
 
     for i, (class_name, action) in enumerate(class_buttons):
-        class_label = ctk.CTkLabel(bottom_left_frame, text=class_name, font=("Arial", 16))
+        class_label = ctk.CTkLabel(classes_frame, text=class_name, font=("Arial", 16))
         class_label.grid(row=i+1, column=0, sticky="w", padx=10, pady=5)
 
-        action_button = ctk.CTkButton(bottom_left_frame, text=action, width=50, height=30)
+        action_button = ctk.CTkButton(classes_frame, text=action, fg_color="transparent", text_color="#000", width=10, height=10)
         action_button.grid(row=i+1, column=1, sticky="e", padx=10, pady=5)
 
-    students_label = ctk.CTkLabel(bottom_left_frame, text="Students", font=("Arial", 18, "bold"))
-    students_label.grid(row=4, column=0, sticky="w", padx=10, pady=10)
+    # Progress section
+    progress_frame = ctk.CTkFrame(bottom_frame, fg_color="#f8f9fa", corner_radius=10)
+    progress_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
 
-    students = ["Nicole kc", "Ryan shah", "Nia Gurung", "Asmi Thapa"]
-    for i, student in enumerate(students):
-        student_label = ctk.CTkLabel(bottom_left_frame, text=student, font=("Arial", 16))
-        student_label.grid(row=i+5, column=0, sticky="w", padx=10, pady=5)
+    task_button = ctk.CTkButton(progress_frame, text="18 Assigned Tasks", font=("Arial", 14), fg_color="#C0EAF9", text_color="#000", corner_radius=5, width=100, height=100)
+    task_button.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
 
-        edit_button = ctk.CTkButton(bottom_left_frame, text="Edit", width=50, height=30)
-        edit_button.grid(row=i+5, column=1, sticky="e", padx=10, pady=5)
+    completed_button = ctk.CTkButton(progress_frame, text="15 Assignments Completed", font=("Arial", 14), fg_color="#C0EAF9", text_color="#000", corner_radius=5, width=100, height=100)
+    completed_button.grid(row=0, column=1, padx=5, pady=5, sticky="nsew")
 
-    # Calendar section
-    calendar_frame = ctk.CTkFrame(content_frame, fg_color="#f8f9fa", corner_radius=10)
-    calendar_frame.grid(row=1, column=1, sticky="nsew", padx=10, pady=10)
+    standards_button = ctk.CTkButton(progress_frame, text="09 Standards Completed", font=("Arial", 14), fg_color="#C0EAF9", text_color="#000", corner_radius=5, width=100, height=100)
+    standards_button.grid(row=0, column=2, padx=5, pady=5, sticky="nsew")
 
-    calendar_label = ctk.CTkLabel(calendar_frame, text="August", font=("Arial", 18, "bold"))
-    calendar_label.grid(row=0, column=0, padx=10, pady=(10, 0))
+    # New Students section
+    students_frame = ctk.CTkFrame(bottom_frame, fg_color="#fff", corner_radius=10)
+    students_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
 
-    calendar_placeholder = ctk.CTkLabel(calendar_frame, text="Calendar", font=("Arial", 16), width=200, height=200, corner_radius=10, fg_color="#e9ecef")
-    calendar_placeholder.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
+    students_label = ctk.CTkLabel(students_frame, text="Students", font=("Arial", 18, "bold"))
+    students_label.grid(row=0, column=0, sticky="w", padx=10, pady=10)
 
-    # Progress and stats section
-    progress_frame = ctk.CTkFrame(content_frame, fg_color="#f8f9fa", corner_radius=10)
-    progress_frame.grid(row=2, column=0, sticky="nsew", padx=10, pady=10)
+    student_buttons = [
+        ("All Students", "+"),
+        ("John Doe", "+"),
+        ("Jane Smith", "+"),
+        ("Emily Davis", "+"),
+    ]
 
-    # Adjust grid configuration to avoid overlap
-    progress_frame.grid_columnconfigure(0, weight=1)
-    progress_frame.grid_columnconfigure(1, weight=1)
-    progress_frame.grid_columnconfigure(2, weight=1)
-    progress_frame.grid_rowconfigure(0, weight=1)
-    progress_frame.grid_rowconfigure(1, weight=3)
+    for i, (student_name, action) in enumerate(student_buttons):
+        student_label = ctk.CTkLabel(students_frame, text=student_name, font=("Arial", 16))
+        student_label.grid(row=i+1, column=0, sticky="w", padx=10, pady=5)
 
-    task_label = ctk.CTkLabel(progress_frame, text="18 Assigned Task", font=("Arial", 14), fg_color="#e9ecef", corner_radius=5)
-    task_label.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
+        action_button = ctk.CTkButton(students_frame, text=action, fg_color="transparent", text_color="#000", width=10, height=10)
+        action_button.grid(row=i+1, column=1, sticky="e", padx=10, pady=5)
 
-    completed_label = ctk.CTkLabel(progress_frame, text="15 Assignment Completed", font=("Arial", 14), fg_color="#e9ecef", corner_radius=5)
-    completed_label.grid(row=0, column=1, padx=5, pady=5, sticky="nsew")
+    # Chart section
+    chart_frame = ctk.CTkFrame(bottom_frame, fg_color="#f8f9fa", corner_radius=10)
+    chart_frame.grid(row=1, column=1, sticky="nsew", padx=(100, 40), pady=(0, 100))
 
-    standards_label = ctk.CTkLabel(progress_frame, text="09 Standards Completed", font=("Arial", 14), fg_color="#e9ecef", corner_radius=5)
-    standards_label.grid(row=0, column=2, padx=5, pady=5, sticky="nsew")
 
-    # Progress pie chart placeholder
-    chart_frame = ctk.CTkFrame(progress_frame, fg_color="#fff", width=150, height=150, corner_radius=10)
-    chart_frame.grid(row=1, column=0, columnspan=3, pady=10, padx=10)
 
-    chart_placeholder = ctk.CTkLabel(chart_frame, text="09\n15\n18", font=("Arial", 24, "bold"), justify="center")
-    chart_placeholder.place(relx=0.5, rely=0.5, anchor="center")
-
-    # Top performers section
-    performers_frame = ctk.CTkFrame(content_frame, fg_color="#f8f9fa", corner_radius=10)
-    performers_frame.grid(row=2, column=1, sticky="nsew", padx=10, pady=10)
-
-    performers_label = ctk.CTkLabel(performers_frame, text="Top performers", font=("Arial", 16, "bold"))
-    performers_label.grid(row=0, column=0, padx=10, pady=(10, 0))
-
-    # List of top performers
-    top_performers = ["Nia Gurung", "Ryan shah"]
-    for i, performer in enumerate(top_performers):
-        performer_label = ctk.CTkLabel(performers_frame, text=performer, font=("Arial", 14))
-        performer_label.grid(row=i+1, column=0, sticky="w", padx=10, pady=5)
+    chart_image = Image.open("./images/student-chart.png")
+    chart_image = chart_image.resize((300, 200))
+    chart_photo = ImageTk.PhotoImage(chart_image)
+    chart_label = ctk.CTkLabel(chart_frame, image=chart_photo, text="")
+    chart_label.image = chart_photo  # Keep a reference to avoid garbage collection
+    chart_label.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)

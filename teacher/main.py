@@ -9,9 +9,8 @@ from dashboard import create_dashboard_content
 from courses import create_courses_content
 from students import create_students_content
 from attendance import create_attendance_content
-
 from database.connection import create_connection
-from database.handler import create_record,read_records
+
 
 
 # Set up the main application window
@@ -33,13 +32,18 @@ ctk.set_default_color_theme("blue")
 app.grid_rowconfigure(1, weight=1)
 app.grid_columnconfigure(1, weight=1)
 
+# Retrieve user ID from command-line arguments
+user_id = sys.argv[1] if len(sys.argv) > 1 else None
+
+conn = create_connection('assignment.db')
+
 def switch_view(view_name):
     for widget in content_frame.winfo_children():
         widget.destroy()
     
  
     if view_name == "settings":
-        create_settings_content(content_frame)
+        create_settings_content(content_frame,user_id,conn)
     elif view_name == "dashboard":
         create_dashboard_content(content_frame)
     elif view_name == "courses":

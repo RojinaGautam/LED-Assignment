@@ -3,7 +3,10 @@ import sqlite3
 from tkinter import simpledialog, messagebox
 from database.connection import create_connection
 from database.handler import read_records, update_record, create_record, delete_record
+from PIL import Image, ImageTk
 
+# Global variables
+bottom_right_frame = None
 
 def create_dashboard_content(master):
     global content_frame
@@ -32,51 +35,57 @@ def create_dashboard_content(master):
                                   font=("Arial", 16))
     progress_label.grid(row=1, column=0, sticky="w", padx=10, pady=10)
 
-    # Add the illustration placeholder on the right
-    illustration_placeholder = ctk.CTkLabel(top_frame, text="Illustration Here", font=("Arial", 16), width=200,
-                                            height=150, corner_radius=10, fg_color="#e9ecef")
+    image_path = "./images/illustration.png"
+    pil_image = Image.open(image_path)
+    ctk_image = ImageTk.PhotoImage(pil_image)
+
+    # Create the label with the image
+    illustration_placeholder = ctk.CTkLabel(top_frame, image=ctk_image, text="", width=200, height=150, corner_radius=10)
     illustration_placeholder.grid(row=0, column=1, rowspan=2, sticky="e", padx=20)
 
-    # Add Subject Button at the top of the content_frame
-    add_subject_button = ctk.CTkButton(content_frame, text="Add Subject", width=120, height=30, font=("Arial", 14),
-                                       command=lambda: add_subject())
-    add_subject_button.grid(row=1, column=0, sticky="w", padx=10, pady=(10, 10))
+
+    # Bottom section with progress and lessons side by side
+    bottom_frame = ctk.CTkFrame(content_frame, fg_color="#f8f9fa", corner_radius=10)
+    bottom_frame.grid(row=1, column=0, columnspan=2, sticky="nsew", padx=10, pady=10)
+
+    # Configure grid layout for bottom_frame
+    bottom_frame.grid_rowconfigure(0, weight=1)
+    bottom_frame.grid_rowconfigure(1, weight=1)
+    bottom_frame.grid_columnconfigure(0, weight=1)
+    bottom_frame.grid_columnconfigure(1, weight=1)
 
     # Bottom left section with circular progress
-    bottom_left_frame = ctk.CTkFrame(content_frame, fg_color="#f8f9fa", corner_radius=10)
-    bottom_left_frame.grid(row=1, column=1, sticky="nsew", padx=10, pady=10)
+    bottom_left_frame = ctk.CTkFrame(bottom_frame, fg_color="#f8f9fa", corner_radius=10)
+    bottom_left_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
 
     working_hours_label = ctk.CTkLabel(bottom_left_frame, text="Working Hours", font=("Arial", 18))
     working_hours_label.grid(row=0, column=0, sticky="w", padx=10, pady=10)
 
     today_label = ctk.CTkLabel(bottom_left_frame, text="Today", font=("Arial", 16, "bold"), fg_color="#e9ecef",
-                               corner_radius=5, width=50)
+                            corner_radius=5, width=50)
     today_label.grid(row=0, column=1, sticky="e", padx=10, pady=10)
 
     progress_frame = ctk.CTkFrame(bottom_left_frame, fg_color="#fff", width=200, height=200, corner_radius=10)
     progress_frame.grid(row=1, column=0, columnspan=2, pady=10, padx=10)
 
-    progress_label = ctk.CTkLabel(progress_frame, text="84%", font=("Arial", 30, "bold"))
-    progress_label.place(relx=0.5, rely=0.5, anchor="center")
+    # Load the image for progress
+    image_path = "./images/bar.png"
+    pil_image = Image.open(image_path)
+    tk_image = ImageTk.PhotoImage(pil_image)
+
+    # Create a label to display the image in the progress frame
+    progress_image_label = ctk.CTkLabel(progress_frame, image=tk_image)
+    progress_image_label.place(relx=0.5, rely=0.5, anchor="center")
 
     # Bottom right section with lessons table
-    bottom_right_frame = ctk.CTkFrame(content_frame, fg_color="#f8f9fa", corner_radius=10)
-    bottom_right_frame.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=10, pady=10)
+    global bottom_right_frame
+    bottom_right_frame = ctk.CTkFrame(bottom_frame, fg_color="#f8f9fa", corner_radius=10)
+    bottom_right_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
 
     lessons_label = ctk.CTkLabel(bottom_right_frame, text="Lessons", font=("Arial", 18, "bold"))
     lessons_label.grid(row=0, column=0, sticky="w", padx=10, pady=10)
 
-    # Load and display lessons
     refresh_lessons()
-
-    # Calendar placeholder
-    calendar_frame = ctk.CTkFrame(content_frame, fg_color="#f8f9fa", corner_radius=10)
-    calendar_frame.grid(row=2, column=1, sticky="nsew", padx=10, pady=10)
-
-    calendar_label = ctk.CTkLabel(calendar_frame, text="Calendar Here", font=("Arial", 16), width=200, height=200,
-                                  corner_radius=10, fg_color="#e9ecef")
-    calendar_label.place(relx=0.5, rely=0.5, anchor="center")
-
 
 def add_subject():
     subject = simpledialog.askstring("Input", "Enter the new subject:")
@@ -88,7 +97,6 @@ def add_subject():
         messagebox.showinfo("Success", "Subject added successfully.")
         refresh_lessons()
 
-
 def add_assignment(module_id):
     assignment_title = simpledialog.askstring("Input", "Enter the assignment title:")
     description = simpledialog.askstring("Input", "Enter the assignment description:")
@@ -98,13 +106,10 @@ def add_assignment(module_id):
         conn = create_connection("assignment.db")
         create_record(conn, "assignments", columns=("module_id", "assignment_title", "description", "due_date"),
                       values=(module_id, assignment_title, description, due_date))
-
-        # print(module_id)
         conn.close()
         messagebox.showinfo("Success", "Assignment added successfully.")
     else:
         messagebox.showwarning("Warning", "Please fill out all fields.")
-
 
 def delete_lesson(lesson_title):
     conn = create_connection("assignment.db")
@@ -116,9 +121,11 @@ def delete_lesson(lesson_title):
         messagebox.showerror("Error", f"Error updating subject: {e}")
     conn.close()
 
-
 def refresh_lessons():
     global bottom_right_frame
+
+    if bottom_right_frame is None:
+        return
 
     for widget in bottom_right_frame.winfo_children():
         widget.destroy()

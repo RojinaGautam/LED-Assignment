@@ -51,7 +51,7 @@ def addstudent_content(master):
     class_label.grid(row=0, column=1, sticky="w", padx=20, pady=(10, 0))
 
     global class_entry
-    class_entry = ctk.CTkComboBox(details_frame, values=["Class 1", "Class 2", "Class 3"])
+    class_entry = ctk.CTkComboBox(details_frame, values=["Level 1", "Level 2", "Level 3"])
     class_entry.grid(row=1, column=1, padx=20, pady=5, sticky="we")
 
     gender_label = ctk.CTkLabel(details_frame, text="Gender", font=("Arial", 14))
